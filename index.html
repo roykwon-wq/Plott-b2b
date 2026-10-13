@@ -438,7 +438,7 @@ footer{border-top:1px solid var(--border-default); padding:48px 0 40px; margin-t
           </div>
           <div class="field full">
             <button class="form-submit" onclick="submitForm()" data-i="f_submit">문의 보내기</button>
-            <p class="form-note" data-i="f_note">버튼을 누르면 메일 작성 화면으로 연결됩니다. 첨부파일은 열린 메일에 직접 추가해 주세요.</p>
+            <p class="form-note" data-i="f_note">버튼을 누르면 담당 팀으로 바로 접수됩니다. 첨부파일이 있으시면 접수 후 team.b2b@handys.co.kr로 보내주세요.</p>
           </div>
         </div>
       </div>
@@ -1551,7 +1551,7 @@ const I18N = {
   f_company:['회사·단체명','Company / Group'], f_name:['담당자명','Contact Name'], f_email:['이메일','Email'], f_phone:['연락처','Phone'],
   f_region:['희망 권역','Preferred Region'], f_branch:['희망 지점','Preferred Branch'], f_pax:['예상 인원','Group Size'], f_date:['희망 일정','Preferred Dates'], f_msg:['요청 사항','Requirements'],
   f_file:['첨부파일','Attachment'], f_file_ph:['파일 선택 (견적 요청서, 행사 계획서 등)','Choose files (RFQ, event plan, etc.)'],
-  f_submit:['문의 보내기','Send Inquiry'], f_note:['버튼을 누르면 메일 작성 화면으로 연결됩니다.','This opens your mail app with the details pre-filled.'],
+  f_submit:['문의 보내기','Send Inquiry'], f_note:['버튼을 누르면 담당 팀으로 바로 접수됩니다. 첨부파일이 있으시면 접수 후 team.b2b@handys.co.kr로 보내주세요.','Your inquiry goes straight to our team. If you have attachments, please email them to team.b2b@handys.co.kr after submitting.'],
   fc_brand:['브랜드','Brands'], fc_biz:['비즈니스','Business'], fl_branch:['전국 지점','Branches'], fl_service:['단체 서비스','Group Services'], fl_contact:['문의하기','Contact']
 };
 
@@ -2067,29 +2067,71 @@ function onFileChange(){
   }
 }
 
-function submitForm(){
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mbgdavqd';
+
+async function submitForm(){
   const g = id=>document.getElementById(id).value.trim();
   const company=g('f-company'), name=g('f-name'), email=g('f-email'), phone=g('f-phone'),
         region=g('f-region'), branch=g('f-branch'), pax=g('f-pax'), date=g('f-date'), msg=g('f-msg');
   const L = lang==='ko';
-  const fileInput = document.getElementById('f-file');
-  let fileLine = '';
-  if(fileInput && fileInput.files && fileInput.files.length){
-    const names = Array.from(fileInput.files).map(f=>f.name).join(', ');
-    fileLine = `\n${L?'첨부파일':'Attachment'}: ${names} (${L?'메일에 직접 첨부해 주세요':'please attach to this email'})`;
+
+  // 필수값 간단 확인 (담당자명, 연락처 또는 이메일 중 하나)
+  if(!name || (!email && !phone)){
+    alert(L ? '담당자명과 연락처(또는 이메일)를 입력해 주세요.' : 'Please enter a contact name and a phone number or email.');
+    return;
   }
-  const subject = L ? `[단체문의] ${company||'단체'} ${pax?('· '+pax):''}` : `[Group Inquiry] ${company||'Group'} ${pax?('· '+pax):''}`;
-  const body =
-`${L?'회사·단체명':'Company/Group'}: ${company}
-${L?'담당자명':'Contact'}: ${name}
-${L?'이메일':'Email'}: ${email}
-${L?'연락처':'Phone'}: ${phone}
-${L?'희망 권역':'Region'}: ${region}
-${L?'희망 지점':'Branch'}: ${branch}
-${L?'예상 인원':'Group Size'}: ${pax}
-${L?'희망 일정':'Dates'}: ${date}
-${L?'요청 사항':'Requirements'}: ${msg}${fileLine}`;
-  window.location.href = `mailto:team.b2b@handys.co.kr?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  const btn = document.querySelector('.form-submit');
+  const note = document.querySelector('.form-note');
+  const origBtn = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = L ? '전송 중…' : 'Sending…';
+
+  // 첨부파일명 (무료 플랜은 파일 전송 불가 → 파일명만 기록)
+  const fileInput = document.getElementById('f-file');
+  let fileNames = '';
+  if(fileInput && fileInput.files && fileInput.files.length){
+    fileNames = Array.from(fileInput.files).map(f=>f.name).join(', ');
+  }
+
+  const payload = {
+    '회사·단체명': company,
+    '담당자명': name,
+    '이메일': email,
+    '연락처': phone,
+    '희망 권역': region,
+    '희망 지점': branch,
+    '예상 인원': pax,
+    '희망 일정': date,
+    '요청 사항': msg,
+    '첨부파일(파일명)': fileNames,
+    '_subject': (L ? `[단체문의] ${company||'단체'}` : `[Group Inquiry] ${company||'Group'}`) + (pax?(' · '+pax):'')
+  };
+
+  try {
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if(res.ok){
+      btn.textContent = L ? '✓ 접수 완료' : '✓ Received';
+      note.textContent = L
+        ? '문의가 정상 접수되었습니다. 1영업일 내 회신드리겠습니다.' + (fileNames ? ' 첨부파일이 있으시면 접수 후 team.b2b@handys.co.kr로 보내주세요.' : '')
+        : 'Your inquiry has been received. We will reply within one business day.' + (fileNames ? ' Please email attachments to team.b2b@handys.co.kr.' : '');
+      // 입력 초기화
+      ['f-company','f-name','f-email','f-phone','f-pax','f-date','f-msg'].forEach(id=>{const el=document.getElementById(id); if(el) el.value='';});
+      if(fileInput){ fileInput.value=''; onFileChange(); }
+    } else {
+      throw new Error('submit failed');
+    }
+  } catch(err){
+    btn.disabled = false;
+    btn.textContent = origBtn;
+    note.textContent = L
+      ? '전송에 실패했습니다. 잠시 후 다시 시도하거나 team.b2b@handys.co.kr로 직접 보내주세요.'
+      : 'Submission failed. Please try again later or email team.b2b@handys.co.kr directly.';
+  }
 }
 
 /* ============ INIT ============ */
