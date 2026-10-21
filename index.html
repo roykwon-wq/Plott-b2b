@@ -185,6 +185,19 @@ section{padding:72px 0;}
 @media(max-width:1024px){.feat-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:640px){.feat-grid{grid-template-columns:1fr;}}
 
+/* ===== SPC (경쟁력) ===== */
+.spc-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+.spc-card{background:var(--bg-surface); border:1px solid var(--border-default); border-radius:12px; padding:32px 24px; text-align:center;}
+.spc-icon{width:64px; height:64px; border-radius:9999px; background:var(--brand-deep); display:flex; align-items:center; justify-content:center; margin:0 auto 20px;}
+.spc-icon svg{width:30px; height:30px; stroke:#fff; fill:none; stroke-width:1.8;}
+.spc-card h3{font-size:19px; font-weight:800; color:var(--text-brand); margin-bottom:4px;}
+.spc-card .spc-sub{font-size:13px; color:var(--text-secondary); margin-bottom:18px;}
+.spc-divider{width:40px; height:2px; background:var(--border-strong); margin:0 auto 18px;}
+.spc-card .spc-desc{font-size:14px; color:var(--text-secondary); line-height:1.65;}
+.spc-card .spc-point{font-size:14px; color:var(--text-default); line-height:1.6; margin-top:14px;}
+.spc-card .spc-point b{color:var(--text-brand); font-weight:700;}
+@media(max-width:768px){.spc-grid{grid-template-columns:1fr;}}
+
 /* ===== Form ===== */
 .contact{background:var(--bg-inverse); border-radius:16px; padding:48px; display:grid; grid-template-columns:0.9fr 1.1fr; gap:48px;}
 .contact-left h2{font-size:32px; font-weight:800; color:var(--text-inverse); letter-spacing:-0.02em;}
@@ -389,6 +402,18 @@ footer{border-top:1px solid var(--border-default); padding:48px 0 40px; margin-t
       <h2 data-i="ft_h">단체·기업 고객을 위한 서비스</h2>
     </div>
     <div class="feat-grid" id="feat-grid"></div>
+  </div>
+</section>
+
+<!-- SPC (경쟁력) -->
+<section id="spc" style="padding-top:0;">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-label">Competitive Advantage</div>
+      <h2 data-i="spc_h">핸디즈만의 경쟁력 (SPC)</h2>
+      <p data-i="spc_p">비대면·자동화 운영으로 더 빠르고, 더 프라이빗하고, 더 합리적인 숙박 경험을 제공합니다.</p>
+    </div>
+    <div class="spc-grid" id="spc-grid"></div>
   </div>
 </section>
 
@@ -1533,6 +1558,8 @@ const I18N = {
   br_h:['전국 지점 안내','Our Branches'],
   br_p:['권역을 선택해 지점별 브랜드 라인, 숙소 유형, 부대시설을 확인하세요.','Select a region to view each branch\'s brand line, stay type and amenities.'],
   ft_h:['단체·기업 고객을 위한 서비스','Services for Groups & Businesses'],
+  spc_h:['핸디즈만의 경쟁력 (SPC)','The Handys Advantage (SPC)'],
+  spc_p:['비대면·자동화 운영으로 더 빠르고, 더 프라이빗하고, 더 합리적인 숙박 경험을 제공합니다.','Contactless, automated operations deliver a faster, more private and more affordable stay.'],
   ct_h:['단체·기업 숙박 문의','Group & Corporate Inquiry'],
   ct_p:['인원, 일정, 희망 지역을 남겨주시면 전담 매니저가 권역·브랜드별 최적 견적과 함께 1영업일 내 회신드립니다.','Share your group size, dates and preferred region — a dedicated manager will reply within one business day with the best options.'],
   ci_op:['운영사','Operator'], ci_em:['이메일','Email'], ci_hr:['응대 시간','Hours'],
@@ -1561,6 +1588,27 @@ const FEATURES = [
   {icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
    ko_h:'다국어 응대', en_h:'Multilingual Support',
    ko_p:'한국어·영어·중국어 응대로 해외 단체와 인바운드 행사까지 지원합니다.', en_p:'Korean, English and Chinese support for international groups and inbound events.'}
+];
+
+const SPC = [
+  {icon:'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5"/><path d="M9 2h6M12 2v3"/>',
+   ko_t:'Speed', ko_sub:'0초의 대기시간', en_t:'Speed', en_sub:'Zero wait time',
+   ko_desc:'더 이상 체크인을 위해 프런트데스크에서 줄을 서거나<br>기다릴 필요가 없습니다.',
+   en_desc:'No more lining up or waiting at the front desk to check in.',
+   ko_point:'→ <b>스마트폰</b>으로 미리 체크인을 마친 후 시간을 허비하지<br>않고 도착 즉시 객실로 직행',
+   en_point:'→ Check in ahead on your <b>smartphone</b> and head straight to your room on arrival'},
+  {icon:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+   ko_t:'Privacy', ko_sub:'완벽한 프라이버시', en_t:'Privacy', en_sub:'Complete privacy',
+   ko_desc:'타인과의 접촉이 불필요합니다.<br>"누구와도 마주치지 않는 편안함"',
+   en_desc:'No contact with others required — the comfort of never crossing paths with anyone.',
+   ko_point:'→ 추가 어메니티 요청(수건·생수 등) 또한 <b>모바일 프런트</b>를 통해 비대면으로 간편히 신청 가능',
+   en_point:'→ Request extra amenities (towels, water, etc.) contact-free via the <b>mobile front desk</b>'},
+  {icon:'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>',
+   ko_t:'Cost-Efficiency', ko_sub:'합리적인 가격', en_t:'Cost-Efficiency', en_sub:'Smart value',
+   ko_desc:'비대면 운영방식으로 줄어든 인건비를 고객에게 혜택으로 돌려줍니다.',
+   en_desc:'Contactless operations cut labor costs, and the savings go back to guests.',
+   ko_point:'→ 동급 숙박시설 대비 <b>뛰어난 가성비</b>',
+   en_point:'→ <b>Outstanding value</b> compared with similar-class properties'}
 ];
 
 /* ============ STATE ============ */
@@ -1665,6 +1713,20 @@ function renderFeatures(){
   </div>`).join('');
 }
 
+function renderSPC(){
+  const el = document.getElementById('spc-grid');
+  if(!el) return;
+  const L = lang==='ko';
+  el.innerHTML = SPC.map(s=>`<div class="spc-card">
+    <div class="spc-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">${s.icon}</svg></div>
+    <h3>${L?s.ko_t:s.en_t}</h3>
+    <div class="spc-sub">${L?s.ko_sub:s.en_sub}</div>
+    <div class="spc-divider"></div>
+    <p class="spc-desc">${L?s.ko_desc:s.en_desc}</p>
+    <p class="spc-point">${L?s.ko_point:s.en_point}</p>
+  </div>`).join('');
+}
+
 /* ============ MAP SVG ============ */
 function renderMap(){
   // 실제 남한 윤곽(simplemaps, Mercator, viewBox 1000x925) 기반.
@@ -1742,7 +1804,7 @@ function setLang(l){
   document.getElementById('lang-ko').classList.toggle('active', l==='ko');
   document.getElementById('lang-en').classList.toggle('active', l==='en');
   applyI18n();
-  renderFilters(); renderBranches(); renderRegions(); renderFeatures(); renderMap();
+  renderFilters(); renderBranches(); renderRegions(); renderFeatures(); renderSPC(); renderMap();
 }
 /* ============ HERO SLIDER ============ */
 let heroIdx = 0;
@@ -2151,7 +2213,7 @@ document.addEventListener('keydown', e=>{
 });
 applyI18n();
 renderHero(); restartHeroTimer();
-renderFilters(); renderBranches(); renderRegions(); renderFeatures(); renderMap(); renderBranchSelect();
+renderFilters(); renderBranches(); renderRegions(); renderFeatures(); renderSPC(); renderMap(); renderBranchSelect();
 </script>
 </body>
 </html>
