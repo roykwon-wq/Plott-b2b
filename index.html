@@ -195,6 +195,16 @@ section{padding:72px 0;}
 @media(max-width:640px){.feat-grid{grid-template-columns:1fr;}}
 
 /* ===== SPC (경쟁력) ===== */
+/* ===== 객실 페이지 헤더 / 뒤로가기 ===== */
+.roompage-head{position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:16px; padding:16px 40px; background:rgba(247,247,246,0.88); backdrop-filter:blur(12px); border-bottom:1px solid var(--border-default);}
+.roompage-back{display:inline-flex; align-items:center; gap:7px; background:var(--bg-surface); border:1px solid var(--border-default); color:var(--text-default); font-size:14px; font-weight:600; padding:9px 16px 9px 12px; border-radius:9999px; cursor:pointer; transition:border-color 160ms, background 160ms, color 160ms; box-shadow:0 1px 2px rgba(27,27,26,0.04);}
+.roompage-back:hover{border-color:var(--action-primary); color:var(--text-brand); background:var(--brand-subtle);}
+.roompage-back:active{background:var(--action-secondary-hover);}
+.roompage-back svg{transition:transform 160ms;}
+.roompage-back:hover svg{transform:translateX(-2px);}
+.roompage-title{font-size:15px; font-weight:600; color:var(--text-secondary);}
+@media(max-width:768px){.roompage-head{padding:14px 20px;}}
+
 .spc-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
 .spc-card{background:var(--bg-surface); border:1px solid var(--border-default); border-radius:12px; padding:32px 24px; text-align:center;}
 .spc-icon{width:64px; height:64px; border-radius:9999px; background:var(--brand-deep); display:flex; align-items:center; justify-content:center; margin:0 auto 20px;}
