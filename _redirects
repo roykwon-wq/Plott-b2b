@@ -1,0 +1,7 @@
+# 옛 주소(/Plott-b2b/)로 들어온 방문자를 메인(/)으로 영구 이동
+/Plott-b2b     /    301!
+/Plott-b2b/    /    301!
+/Plott-b2b/*   /    301!
+/plott-b2b     /    301!
+/plott-b2b/    /    301!
+/plott-b2b/*   /    301!
